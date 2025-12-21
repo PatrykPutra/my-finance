@@ -1,0 +1,152 @@
+#root {
+  max-width: 1280px;
+  min-width: 800px;
+  margin: 0 auto;
+ 
+  
+}
+header {
+  background-color: lightgray;
+  width: 100%;
+}
+.header {
+  display: flex;
+  flex-direction: row;
+  align-items:flex-start;
+  justify-content: space-between;
+  padding: 2%;
+}
+.logo {
+  height: 1em;
+  padding: 0%;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.containter {
+  display: flex;
+  flex-direction: column;
+}
+.filter-bar {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  width: 100%;
+  gap: 10px;
+  box-sizing: border-box;
+  
+}
+.filter-bar-search {
+  width: 90%;
+  min-height: 1.5rem;
+
+}
+.filter-bar-search-panel {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+
+}
+.filter-bar-buttons-panel {
+  display:flex;
+  flex-direction: row;
+  column-gap: 10px;
+ 
+}
+.filter-bar-button {
+  color:black;
+  height: 36px;
+  min-width: 80px;
+  border-radius: 19px;
+  align-content: baseline;
+}
+
+.filter-bar-selected-button {
+  background-color: lightgrey;
+}
+
+.transaction-list {
+  padding: 10px;
+  width: 100%;
+  box-sizing: border-box;
+}
+.transaction {
+  display: flex;
+  flex-direction: column;
+  gap:10px;
+  border-bottom: solid 1px;
+  border-color: grey;
+  padding: 10px;
+}
+.transaction-description {
+  text-align: start;
+  height: auto; 
+  margin:0;
+}
+.transaction-finance {
+  display: flex;
+  flex-direction: row;
+  justify-content: end;
+  gap: 20px;
+  height:auto;
+  margin:0;
+}
+.add-transaction {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+}
+.add-transaction form {
+  display: flex;
+  flex-direction: column;
+  justify-content: left;
+  gap: 10px;
+}
+.add-transaction textarea {
+  resize:none;
+  height: 3em;
+}
+
+.add-transaction-button-panel {
+  display: flex;
+  gap:20px;
+  justify-content: center;
+}
+
+.transaction-editor-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.transaction-editor-title {
+display: flex;
+flex-direction: column;
+gap: 10px;
+}
+.transaction-editor-title textarea {
+  resize:none;
+}
+
+.transaction-editor-amount {
+  display: flex;
+  gap:10px;
+}
+.transaction-editor-button-panel {
+  display: flex;
+  gap: 20px;
+  justify-content: right;
+
+}
+.error {
+  display: flex;
+  justify-content: center;
+  color: #721c24;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  border-radius: 4px;
+}
+
