@@ -1,35 +1,48 @@
-import {useState, useContext} from 'react'
+import {useState} from 'react'
 import {ErrorBoundary} from 'react-error-boundary'
-import { SearchQueryProvider } from './context/SearchQueryProvider.jsx'
-import TokenContext from './context/TokenContext.js'
+import {Routes, Route} from "react-router-dom"
+import TransactionsPanel from './components/TransactionsPanel.jsx'
 import Header from './components/Header.jsx'
-import FilterBar from './components/FilterBar.jsx'
-import TransactionsList from './components/TransactionsList.jsx'
+import Settings from './components/Settings.jsx'
 import Login from './components/Login.jsx'
+import Signup from './components/Signup.jsx'
+import AuthenticationProvider from './context/AuthenticationProvider.jsx'
+import NotificationProvider from './context/NotificationProvider.jsx'
+import PrivateRoute from './components/PrivateRoute.jsx'
 import './App.css'
 
-
+//styling
 function App() {
-//user creation form
-  const {token, setToken} = useContext(TokenContext);
-  const [transactions, setTransactions] = useState([]);
-  const [transactionsError, setTransactionsError] = useState(null);
- 
-if(!token) {
-    return <Login setToken={setToken} />
-  }
 
+  const [transactions, setTransactions] = useState([]);
   return (
     <div className='containter'>
-        <header>
-          <Header setToken={setToken} />
-        </header>
-      <ErrorBoundary fallback={<div>Something went wrong</div>}>
-        <SearchQueryProvider>
-          <FilterBar token={token.token} setTransactions={setTransactions} setTransactionsError={setTransactionsError} />
-          <TransactionsList token={token.token} transactions={transactions} setTransactions={setTransactions} transactionsError={transactionsError} setTransactionsError={setTransactionsError} />
-        </SearchQueryProvider>
-      </ErrorBoundary>
+      <AuthenticationProvider>
+        <NotificationProvider>
+          <header>
+            <Header />
+          </header>
+          <ErrorBoundary fallback={<div>Something went wrong</div>}>
+            <Routes>
+              <Route element={<PrivateRoute />}>
+                <Route
+                  path="/"
+                  element={
+                    <TransactionsPanel
+                      transactions={transactions}
+                      setTransactions={setTransactions}
+                    />}
+                />
+              </Route>
+              <Route element={<PrivateRoute />}>
+                <Route path="/settings" element={<Settings />} />
+              </Route>
+              <Route path="/signup" element={<Signup />}></Route>
+              <Route path="/login" element={<Login />} />
+            </Routes>
+          </ErrorBoundary>
+        </NotificationProvider>
+      </AuthenticationProvider>
     </div>
   )
 }

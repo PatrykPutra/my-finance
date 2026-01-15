@@ -1,4 +1,4 @@
-const API_URL = "https://localhost:7113/api";
+const API_URL = import.meta.env.VITE_API_BASE_URL;
 
 export async function getTransactions(token, queryParams) {
     
@@ -30,10 +30,10 @@ export async function addTransaction(token,newTransaction) {
         },
         body: json
     });
- 
-    if(!response.ok) throw new Error("Operation failed.");
-
     const data = await response.json();
+    if(!response.ok) throw new Error(data.error);
+
+    
     return data;
 }
 
@@ -49,9 +49,9 @@ export async function updateTransaction(token,newTransaction) {
         body: json
     });
 
-    if (!response.ok) throw new Error("Operation failed.");
-
     const data = await response.json();
+    if(!response.ok) throw new Error(data.error);
+
     return data;
 
 }
@@ -66,6 +66,9 @@ export async function deleteTransaction(token, id) {
         },
     });
 
-    if (!response.ok) throw new Error("Operation failed.");
+    if (!response.ok) {
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error);
+    }
 
 }

@@ -2,19 +2,23 @@ import '../App.css'
 import {useState} from 'react'
 import {deleteTransaction, getTransactions} from '../services/transactionService'
 import TransactionEditor from './TransactionEditor'
+import { useAuthentication } from '../context/AuthenticationProvider'
+import { useNotification } from '../context/NotificationProvider'
 
-export default function Transaction({token,transaction, setTransactions,setTransactionsError}) {
+export default function Transaction({transaction, setTransactions}) {
     const [isCollapsed, setIsCollapsed] = useState(true);
     const [isInEditing, setIsInEditing] = useState(false);
+    const authentication = useAuthentication();
+    const notification = useNotification();
 
     const handleDelete = () => {
 
-        deleteTransaction(token, transaction.id)
+        deleteTransaction(authentication.token, transaction.id)
             .then(() => {
-                getTransactions(token)
+                getTransactions(authentication.token)
                     .then(data => setTransactions(data))
-                    .catch(error => setTransactionsError(error.message));
-                setTransactionsError(null);
+                    .catch(error => notification.requestNotification("error",error.message, "TransactionsList"));
+                notification.cancelNotification("TransactionsList");
             })
     }
     return (
@@ -22,21 +26,24 @@ export default function Transaction({token,transaction, setTransactions,setTrans
             {
                 !isInEditing &&
                 <div key={transaction.id} className="transaction" onClick={() => setIsCollapsed(!isCollapsed)}>
-                    <div className="transaction-description">
-                        <p>{transaction.date}</p>
-                        <p>{transaction.title}</p>
+                    <div className='transaction-body'>
+                        <div className="transaction-description">
+                            <p>{transaction.date}</p>
+                            <h3>{transaction.title}</h3>
+                        </div>
+
+                        <div className="transaction-finance">
+                            <p className={transaction.amount < 0 ? 'transaction-expense' : 'transaction-income'}>{transaction.amount}</p>
+                            <p>Balance: {transaction.saldo}</p>
+                        </div>
                     </div>
 
-                    <div className="transaction-finance">
-                        <p>{transaction.amount}</p>
-                        <p>{transaction.saldo}</p>
-                    </div>
                     <div>
                         {
                             !isCollapsed &&
-                            <div>
+                            <div className='transaction-buttons'>
                                 <button onClick={handleDelete}>Delete</button>
-                                <button onClick={()=>setIsInEditing(!isInEditing)}>Edit</button>
+                                <button onClick={() => setIsInEditing(!isInEditing)}>Edit</button>
                             </div>
                         }
                     </div>
@@ -44,8 +51,11 @@ export default function Transaction({token,transaction, setTransactions,setTrans
             }
             {
                 isInEditing &&
-                <TransactionEditor  token={token} transaction={transaction} setTransactions={setTransactions} setIsInEditing={setIsInEditing} setTransactionsError={setTransactionsError}></TransactionEditor>
-
+                <TransactionEditor 
+                    transaction={transaction} 
+                    setTransactions={setTransactions} 
+                    setIsInEditing={setIsInEditing} 
+                />
             }
         </>   
     )

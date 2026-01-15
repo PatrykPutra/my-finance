@@ -1,45 +1,75 @@
 import '../App.css'
 import {useState, useContext} from 'react'
 import { updateTransaction, getTransactions } from '../services/transactionService';
-import SearchQueryContext from '../context/SearchQueryContext';
-import ErrorNotification from './ErrorNotification';
+import { useSearchQuery } from '../context/SearchQueryProvider';
+import Notification from './Notification';
+import { useAuthentication } from '../context/AuthenticationProvider';
+import { useNotification } from '../context/NotificationProvider';
+import { isValidCharacter, isControlCharacter, isValidFormat} from '../assets/utilities/moneyFormatValidatior.js';
 
-export default function TransactionEditor({token, transaction, setTransactions, setIsInEditing,setTransactionsError}) {
+export default function TransactionEditor({ transaction, setTransactions, setIsInEditing}) {
 
     const [newTitle, setNewTitle] = useState(transaction.title);
-    const [newAmount, setNewAmount] = useState(transaction.amount);
-    const {query, setQuery} = useContext(SearchQueryContext);
-    const [error, setError] = useState(null);
+    const [newAmount, setNewAmount] = useState(transaction.amount.toString());
+    const searchQuery = useSearchQuery();
+    const authentication = useAuthentication();
+    const notification = useNotification();
 
     const handleSubmit = (event) => {
         event.preventDefault();
 
-        updateTransaction(token, { id: transaction.id, title: newTitle, amount: newAmount })
+        updateTransaction(authentication.token, { id: transaction.id, title: newTitle, amount: newAmount })
             .then(() => {
-                getTransactions(token, { title: query.searchPhrase, transactionType: query.filter })
+                getTransactions(authentication.token, { title: searchQuery.query.searchPhrase, transactionType: searchQuery.query.filter })
                     .then((data) => {
                         setTransactions(data);
                         setIsInEditing(false);
+                        notification.cancelNotification("TransactionsList")
                     })
-                    .catch(err => setTransactionsError(err.message))
-                setError(null);
+                    .catch(error => notification.requestNotification("error", error.message, "TransactionsList"))
+                notification.cancelNotification(`TransactionEditor-${transaction.id}`);
             })
-            .catch(err => setError(err.message));
+            .catch(error => notification.requestNotification("error",error.message,`TransactionEditor-${transaction.id}`));
     }
+
+    const handleCancel = () => {
+        notification.cancelNotification(`TransactionEditor-${transaction.id}`);
+        setIsInEditing(false);
+    }
+
+    const handleAmountChange = (event) => {
+            if(isControlCharacter(event.key)){
+                if(event.key==="Backspace") setNewAmount(newAmount.slice(0,newAmount.length-1));
+            }
+            if(!isValidCharacter(event.key)) return;
+            if(!isValidFormat(newAmount+event.key)) return;
+          
+            setNewAmount(newAmount+event.key);
+        }
+
     return(
         <form className='transaction-editor-form' onSubmit={handleSubmit}>
-            {error && <ErrorNotification message={error}></ErrorNotification>}
+            {notification.notification.audience===`TransactionEditor-${transaction.id}` && 
+                <Notification
+                    type={notification.notification.type} 
+                    message={notification.notification.message}
+                />
+            }
             <div className='transaction-editor-title'>
                 <label>Title</label>
                 <textarea value={newTitle} onChange={(event) => setNewTitle(event.target.value)}></textarea>
             </div>
             <div className='transaction-editor-amount'>
                 <label>Amount</label>
-                <input value={newAmount} onChange={(event) => setNewAmount(event.target.value)}></input>
+                <input 
+                    value={newAmount} 
+                    onChange={() => setNewAmount(newAmount)}
+                    onKeyUp={(event) => handleAmountChange(event) }>
+                </input>
             </div>
             <div className='transaction-editor-button-panel'>
                 <button type="submit">Submit</button>
-                <button onClick={() => setIsInEditing(false)}>Cancel</button>
+                <button onClick={handleCancel}>Cancel</button>
             </div>  
         </form>
     )

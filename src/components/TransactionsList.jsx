@@ -3,30 +3,47 @@ import {useEffect,useState} from 'react'
 import AddTransaction from './AddTransaction.jsx'
 import Transaction from './Transaction.jsx'
 import {getTransactions} from '../services/transactionService.js'
-import ErrorNotification from './ErrorNotification.jsx'
+import Notification from './Notification.jsx'
+import { useAuthentication } from '../context/AuthenticationProvider.jsx'
+import { useNotification } from '../context/NotificationProvider.jsx'
 
-export default function TransactionsList({token,transactions,setTransactions,transactionsError, setTransactionsError}) {
+export default function TransactionsList({transactions,setTransactions}) {
 
+const notification = useNotification();
+const authentication = useAuthentication();
+const token = authentication.token;
     useEffect(() => {
         try {
             getTransactions(token)
                 .then(data => setTransactions(data))
-                .catch(error => setTransactionsError(error.message));
-            setTransactionsError(null);
+                .catch(error => notification.requestNotification("error",error,"TransactionsList"));
+            notification.cancelNotification("TransactionsList");
         }
         catch (error) {
-            setTransactionsError(error.message);
+            notification.requestNotification("error",error,"TransactionsList");
         }
     },[]);
 
     return(
         <div>
-            <AddTransaction token={token} transactions={transactions} setTransactions={setTransactions}></AddTransaction>
-            {transactionsError && <ErrorNotification message={transactionsError}></ErrorNotification>}
+            <AddTransaction 
+                transactions={transactions} 
+                setTransactions={setTransactions}
+            />
+            {notification.notification.audience==="TransactionsList" && 
+                <Notification 
+                    type={notification.notification.type} 
+                    message={notification.notification.message}
+                />
+            }
             <ul className='transaction-list'>
                 {
                     transactions.map(transaction => (
-                        <Transaction key={transaction.id} transaction={transaction} token={token} setTransactions={setTransactions} setTransactionsError={setTransactionsError} />
+                        <Transaction 
+                            key={transaction.id} 
+                            transaction={transaction} 
+                            setTransactions={setTransactions} 
+                        />
                     ))
                 }
             </ul>

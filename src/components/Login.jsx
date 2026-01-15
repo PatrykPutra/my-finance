@@ -1,63 +1,55 @@
 import { useState } from 'react';
+import {Link} from "react-router-dom"
+import Notification from './Notification';
+import { useAuthentication } from '../context/AuthenticationProvider';
+import { useNotification } from '../context/NotificationProvider';
 
-async function loginUser(credentials) {
-  const API_URL = "https://localhost:7113/api";
-  const response = await fetch(`${API_URL}/Login`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(credentials)
-  });
-  const data = await response.json();
-  if(!response.ok) throw new Error(data.message);
-  
-  return data;
-}
-
-export default function Login({ setToken }) {
-  const [username, setUserName] = useState();
-  const [password, setPassword] = useState();
-  const [loginError, setLoginError] = useState({isFailed: false, errorMessage: ""})
+export default function Login() {
+  const [username, setUserName] = useState("");
+  const [password, setPassword] = useState("");
+  const authentication = useAuthentication();
+  const notification = useNotification();
 
   const handleSubmit = async event => {
     event.preventDefault();
-    try {
-      const token = await loginUser({
-        username,
-        password
-      });
-      setToken(token);
-      setLoginError({
-        isFailed: false,
-        errorMessage: ""
-      })
+
+    try{
+      await authentication.loginAction({username:username,password:password})
+      notification.cancelNotification("Login")
     }
-    catch (error) {
-      setLoginError({
-        isFailed: true,
-        errorMessage: "login failed"
-      })
-    }
+    catch(error)
+    {
+      notification.requestNotification("error",error.message,"Login")
+    } 
   }
 
   return(
-    <div className="login-wrapper">
-      <h1>Please Log In</h1>
-      {loginError.isFailed && <h4>{loginError.errorMessage}</h4>}
-      <form onSubmit={handleSubmit}>
-        <label>
-          <p>Username</p>
-          <input type="text" onChange={event => setUserName(event.target.value)} />
-        </label>
-        <label>
-          <p>Password</p>
-          <input type="password" onChange={event => setPassword(event.target.value)} />
-        </label>
-        <div>
-          <button type="submit">Submit</button>
+    <div className="login">
+      <div className="login-container">
+        <h2>Login</h2>
+        {notification.notification.audience === "Login" &&
+          <Notification
+            type={notification.notification.type}
+            message={notification.notification.message}
+          />
+        }
+        <form className="login-form" onSubmit={event=>handleSubmit(event)}>
+          <label>
+            <p>Username:</p>
+            <input type="text" onChange={event => setUserName(event.target.value)} />
+          </label>
+          <label>
+            <p>Password:</p>
+            <input type="password" onChange={event => setPassword(event.target.value)} />
+          </label>
+          <button className='login-button' type="submit">Submit</button>
+        </form>
+        
+        <div className="login-signup">
+          <p>Don't have an account?</p>
+          <Link to="/signup">Sign up</Link>
         </div>
-      </form>
+      </div>
     </div>
   )
 }

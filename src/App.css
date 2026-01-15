@@ -1,12 +1,9 @@
 #root {
-  max-width: 1280px;
-  min-width: 800px;
-  margin: 0 auto;
- 
-  
+  width: 800px;
+  margin: 0 auto; 
 }
 header {
-  background-color: lightgray;
+  background-color: #b9d7ea;
   width: 100%;
 }
 .header {
@@ -21,6 +18,7 @@ header {
   padding: 0%;
   will-change: filter;
   transition: filter 300ms;
+  cursor: pointer;
 }
 .logo:hover {
   filter: drop-shadow(0 0 2em #646cffaa);
@@ -28,7 +26,172 @@ header {
 .containter {
   display: flex;
   flex-direction: column;
+  width: 100%;
+  height: 100%;
 }
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+.dropbtn {
+  background-color: transparent;
+  color: white;
+  padding: 16px;
+  font-size: 16px;
+  border: none;
+}
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f1f1f1;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+.dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  cursor: pointer;
+}
+
+.dropdown-content a:hover {background-color: #ddd;}
+
+.dropdown:hover .dropdown-content {display: block;}
+
+.dropdown:hover .dropbtn {color: black;}
+
+.notification{
+  display: flex;
+  flex-direction: column;
+  align-items:start;
+  border-style: solid;
+  border-width: thin;
+  border-radius: 5px;
+  padding: 3%;
+  margin: 3%;
+  width: 85%;
+
+}
+.notification h4{
+  margin-top: 0;
+  margin-bottom:0.25em;
+  margin-left: 0;
+  margin-right: 0;
+}
+.notification p{
+  margin:0;
+  text-wrap: wrap;
+}
+.notification-success{
+  border-color:rgb(90,120,85);
+  background-color:rgb(220, 240, 215);
+  color: rgb(90,120,85);
+}
+.notification-error {
+  border-color:rgb(180,50,45);
+  background-color: rgb(240,200,200);
+  color: rgb(180,50,45);
+}
+.login {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background-color: #769fcd;
+}
+.login-container{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  width:50%;
+  min-height: 40%;
+  background-color: white;
+  gap: 5%;
+}
+.login-form{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width:80%;
+}
+.login-form label {
+  width:80%;
+}
+
+.login-form p {
+  margin: 0.25em;
+}
+.login-form input{
+  width:90%;
+}
+.login-button {
+  width: 80%;
+  margin: 1em;
+  color: white;
+  background-color: cornflowerblue;
+}
+.login-signup {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5em;
+  
+}
+.signup {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background-color: cornflowerblue;
+}
+.signup-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  width:50%;
+  min-height:50%;
+  background-color: white;
+}
+.signup-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 80%;
+}
+.signup-form-input-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  justify-content: center;
+  gap: 10px;
+  width: 80%;
+}
+.signup-form-input-panel input {
+  width:90%;
+  height: 1.5em;
+}
+.signup-form-input-panel label {
+  margin-top: 3%;
+}
+.signup-form-submit-button {
+  width: 80%;
+  margin: 1em;
+  color: white;
+  background-color: cornflowerblue;
+}
+
 .filter-bar {
   display: flex;
   flex-direction: column;
@@ -36,18 +199,19 @@ header {
   width: 100%;
   gap: 10px;
   box-sizing: border-box;
-  
 }
 .filter-bar-search {
   width: 90%;
   min-height: 1.5rem;
-
 }
 .filter-bar-search-panel {
   display: flex;
   flex-direction: row;
   gap: 10px;
-
+}
+.filter-bar-search-panel button {
+  background-color: #b9d7ea;
+  border-radius: 5px;
 }
 .filter-bar-buttons-panel {
   display:flex;
@@ -61,24 +225,60 @@ header {
   min-width: 80px;
   border-radius: 19px;
   align-content: baseline;
+  background-color: #b9d7ea;
 }
 
 .filter-bar-selected-button {
-  background-color: lightgrey;
+  background-color: #769fcd;
 }
-
+.transaction-panel{
+  background-color: #f7fbfc;
+}
 .transaction-list {
+  display: flex;
+  flex-direction: column;
+  gap:10px;
   padding: 10px;
   width: 100%;
   box-sizing: border-box;
 }
 .transaction {
-  display: flex;
-  flex-direction: column;
+  
   gap:10px;
-  border-bottom: solid 1px;
-  border-color: grey;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background-color: #d6e6f2;
   padding: 10px;
+}
+.transaction h3{
+  text-wrap: wrap;
+}
+.transaction button {
+  background-color: #769fcd ;
+  border-radius: 5px;
+}
+.transaction:hover {
+  border-color: #646cff;
+}
+.transaction-income{
+  color:forestgreen;
+}
+.transaction-expense {
+  color:crimson;
+}
+.transaction-buttons{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  grid-column-start: 1 ;
+  grid-column-end:span 3;
+  grid-row-start: 2;
+}
+.transaction-body{
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-template-rows: auto auto auto;
+  gap:10px;
 }
 .transaction-description {
   text-align: start;
@@ -87,17 +287,25 @@ header {
 }
 .transaction-finance {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: end;
+  align-items: end;
   gap: 20px;
   height:auto;
   margin:0;
+}
+.transaction-finance p {
+  margin: 0;
 }
 .add-transaction {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  background-color: #f7fbfc;
 
+}
+.add-transaction button {
+  background-color:  #b9d7ea;
 }
 .add-transaction form {
   display: flex;
@@ -141,12 +349,42 @@ gap: 10px;
   justify-content: right;
 
 }
-.error {
+.settings {
   display: flex;
-  justify-content: center;
-  color: #721c24;
-  background-color: #f8d7da;
-  border: 1px solid #f5c6cb;
-  border-radius: 4px;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 10%;
+  gap: 5%;
+  width: 100%;
+  height: 100%;
+  background-color: #f7fbfc;
+}
+.settings button{
+  background-color:  #b9d7ea;
+  width: 150px;;
+}
+.settings input{
+  width:250px;
+}
+.settings-update {
+display: flex;
+flex-direction: column;
+  width: 60%;
+}
+.settings-update-form {
+  display: grid;
+  grid-template-columns: auto auto ;
+  grid-template-rows: auto auto auto auto;
+  gap:20px;
+  width: 100%;
 }
 
+.settings-delete{
+  width: 60%;
+}
+.settings-delete-form{
+  display: grid;
+  grid-template-columns: auto auto ;
+  grid-template-rows: auto auto;
+  gap: 20px;
+}

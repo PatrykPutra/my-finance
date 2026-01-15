@@ -1,42 +1,62 @@
 import '../App.css'
 import {useState} from 'react'
 import {addTransaction} from '../services/transactionService.js'
-import ErrorNotification from './ErrorNotification.jsx';
+import Notification from './Notification.jsx';
+import { useAuthentication } from '../context/AuthenticationProvider.jsx';
+import { useNotification } from '../context/NotificationProvider.jsx';
+import { isValidCharacter, isControlCharacter, isValidFormat} from '../assets/utilities/moneyFormatValidatior.js';
 
-export default function AddTransaction({token,transactions, setTransactions}) {
+export default function AddTransaction({transactions, setTransactions}) {
 
     const [enableAdding, setEnableAdding] = useState(false);
     const [title, setTitle] = useState("");
     const [amount, setAmount] = useState("");
-    const [error, setError] = useState(null);
+    const authentication = useAuthentication();
+    const notification = useNotification();
 
     const clearForm =() => {
         setTitle("");
         setAmount("");
     };
+
     const handleCancel = () => {
         setEnableAdding(false);
         clearForm();
-        setError(null);
+        notification.cancelNotification("AddTransaction");
     };
 
     const handleSubmit = (event) => {
         event.preventDefault();
         try {
-            addTransaction(token,{title:title, amount:amount})
+            addTransaction(authentication.token,{title:title, amount:amount})
                 .then(data => setTransactions([data, ...transactions]))
-                .catch(error => setError(error.message));
+                .catch(error => notification.requestNotification("error",error.message,"AddTransaction"));
             clearForm();
-            setError(null);
+            notification.cancelNotification("AddTransaction");
         }
         catch (error) {
-            setError(error.message)
-        }
-        
+            notification.requestNotification("error",error.message,"AddTransaction")
+        } 
     }
+
+    const handleAmountChange = (event) => {
+        if(isControlCharacter(event.key)){
+            if(event.key==="Backspace") setAmount(amount.slice(0,amount.length-1));
+        }
+        if(!isValidCharacter(event.key)) return;
+        if(!isValidFormat(amount+event.key)) return;
+      
+        setAmount(amount+event.key);
+    }
+
     return(
         <div className='add-transaction'>
-            {error && <ErrorNotification message={error}></ErrorNotification>}
+            {notification.notification.audience==="AddTransaction" &&
+                <Notification
+                type={notification.notification.type}
+                message={notification.notification.message}
+                />
+            }
             {!enableAdding && <button onClick={() => setEnableAdding(true)}>+</button>}
             {
                 enableAdding && (
@@ -44,7 +64,16 @@ export default function AddTransaction({token,transactions, setTransactions}) {
                         <label htmlFor='title'>Title</label>
                         <textarea id='title' name='title' value={title} required={true} onChange={(event)=> setTitle(event.target.value)}></textarea>
                         <label htmlFor='amount'>Amount</label>
-                        <input id='amount' name='amount' type='text' inputMode='numeric' value={amount} required={true} onChange={(event)=> setAmount(event.target.value)}></input>
+                        <input 
+                            id='amount' 
+                            name='amount' 
+                            type='text' 
+                            inputMode='decimal' 
+                            value={amount} 
+                            required={true} 
+                            onKeyUp={(event)=>handleAmountChange(event)}
+                            onChange={()=>setAmount(amount)}>
+                        </input>
                         <div className='add-transaction-button-panel'>
                             <button type="submit">Submit</button>
                             <button onClick={() => handleCancel()}>Cancel</button>   

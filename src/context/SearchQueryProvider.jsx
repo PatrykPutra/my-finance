@@ -1,5 +1,7 @@
-import SearchQueryContext from './SearchQueryContext'
-import { useState } from 'react'
+
+import { createContext, useContext, useState} from "react";
+
+const SearchQueryContext = createContext();
 
 export const SearchQueryProvider = ({ children }) => {
 
@@ -10,4 +12,9 @@ export const SearchQueryProvider = ({ children }) => {
             {children}
         </SearchQueryContext.Provider>
     )
+}
+
+
+export const useSearchQuery= () => {
+    return useContext(SearchQueryContext);
 }

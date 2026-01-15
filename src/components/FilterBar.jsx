@@ -1,11 +1,15 @@
 import '../App.css'
 import {useContext} from 'react'
 import {getTransactions} from '../services/transactionService';
-import SearchQueryContext from '../context/SearchQueryContext';
+import { useSearchQuery } from '../context/SearchQueryProvider';
+import { useAuthentication } from '../context/AuthenticationProvider';
+import { useNotification } from '../context/NotificationProvider';
 
-export default function FilterBar({token, setTransactions,setTransactionsError}){
-    const {query, setQuery} = useContext(SearchQueryContext);
-
+export default function FilterBar({ setTransactions}){
+    const searchQuery = useSearchQuery();
+    const authenticate = useAuthentication();
+    const notification = useNotification();
+    const token = authenticate.token;
     const buttons = [
         { label: "All", value: "all" },
         { label: "Income", value: "income" },
@@ -15,24 +19,24 @@ export default function FilterBar({token, setTransactions,setTransactionsError})
 
         getTransactions(token, { title: title, transactionType: transactionType })
             .then((data) => setTransactions(data))
-            .catch(error => setTransactionsError(error.message));
-
+            .catch(error => notification.requestNotification("error", error.message, "TransactionsList"));
+        notification.cancelNotification("TransactionsList"); 
     }
     const handleFilterChange = (value) => {
-        if(value!==query.filter){
-            setQuery({...query,filter:value});
-            processQuery(query.searchPhrase, value);
+        if(value!==searchQuery.query.filter){
+            searchQuery.setQuery({...searchQuery.query,filter:value});
+            processQuery(searchQuery.query.searchPhrase, value);
         } 
     }
 
     const handleSearch = () => {
-        processQuery(query.searchPhrase,query.filter);
+        processQuery(searchQuery.query.searchPhrase,searchQuery.query.filter);
     }
 
     return(
         <div className="filter-bar">
         <div className="filter-bar-search-panel">
-            <input className="filter-bar-search" type="search" onChange={(event) => setQuery({...query, searchPhrase:event.target.value})}></input>
+            <input className="filter-bar-search" type="search" onChange={(event) => searchQuery.setQuery({...searchQuery.query, searchPhrase:event.target.value})}></input>
             <button onClick={handleSearch}>Search</button>
         </div>
             
@@ -40,7 +44,7 @@ export default function FilterBar({token, setTransactions,setTransactionsError})
                 {buttons.map(({ label, value }) => (
                     <button
                         key={value}
-                        className={`filter-bar-button ${query.filter === value ? "filter-bar-selected-button" : ""
+                        className={`filter-bar-button ${searchQuery.query.filter === value ? "filter-bar-selected-button" : ""
                             }`}
                         onClick={() => handleFilterChange(value)}
                     >
