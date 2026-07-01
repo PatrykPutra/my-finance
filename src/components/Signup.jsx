@@ -1,8 +1,8 @@
 import {useState} from 'react'
 import {Link, useNavigate} from "react-router-dom"
-import { createUser } from '../services/userServices';
+import {createUser} from '../services/userServices';
 import Notification from './Notification';
-import { useNotification } from '../context/NotificationProvider';
+import {useNotification} from '../context/NotificationProvider';
 
 
 export default function Signup(){

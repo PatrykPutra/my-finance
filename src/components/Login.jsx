@@ -26,7 +26,7 @@ export default function Login() {
   return(
     <div className="login">
       <div className="login-container">
-        <h2>Login</h2>
+        <h2>Login to the application</h2>
         {notification.notification.audience === "Login" &&
           <Notification
             type={notification.notification.type}
