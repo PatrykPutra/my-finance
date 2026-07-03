@@ -6,15 +6,16 @@ export async function getTransactions(token, queryParams) {
     if(!response) throw new Error("Could not fetch data from server.");
     let transactions = response;
     // filtering
-    if (queryParams.transactionType === "income") {
-        transactions = transactions.filter(t => t.amount > 0);
-    }
-    if (queryParams.transactionType === "expenses") {
-        transactions = transactions.filter(t => t.amount < 0);
-    }
-    if(queryParams.title)
-    {
-        transactions = transactions.filter(t => t.title.includes(queryParams.title));
+    if (queryParams) {
+        if (queryParams.transactionType === "income") {
+            transactions = transactions.filter(t => t.amount > 0);
+        }
+        if (queryParams.transactionType === "expenses") {
+            transactions = transactions.filter(t => t.amount < 0);
+        }
+        if (queryParams.title) {
+            transactions = transactions.filter(t => t.title.includes(queryParams.title));
+        }
     }
     return transactions;
 }
