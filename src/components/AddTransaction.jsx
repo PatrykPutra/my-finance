@@ -5,6 +5,8 @@ import Notification from './Notification.jsx';
 import { useAuthentication } from '../context/AuthenticationProvider.jsx';
 import { useNotification } from '../context/NotificationProvider.jsx';
 import { isValidCharacter, isControlCharacter, isValidFormat} from '../assets/utilities/moneyFormatValidatior.js';
+import {Button} from 'antd'
+import {PlusCircleOutlined} from '@ant-design/icons'
 
 export default function AddTransaction({transactions, setTransactions}) {
 
@@ -57,7 +59,7 @@ export default function AddTransaction({transactions, setTransactions}) {
                 message={notification.notification.message}
                 />
             }
-            {!enableAdding && <button onClick={() => setEnableAdding(true)}>+</button>}
+            {!enableAdding && <Button icon={<PlusCircleOutlined />} block onClick={() => setEnableAdding(true)}></Button>}
             {
                 enableAdding && (
                     <form onSubmit={handleSubmit}>
@@ -75,8 +77,8 @@ export default function AddTransaction({transactions, setTransactions}) {
                             onChange={()=>setAmount(amount)}>
                         </input>
                         <div className='add-transaction-button-panel'>
-                            <button type="submit">Submit</button>
-                            <button onClick={() => handleCancel()}>Cancel</button>   
+                            <Button htmlType="submit">Submit</Button>
+                            <Button onClick={() => handleCancel()}>Cancel</Button>   
                         </div>      
                     </form>
                 )

@@ -1,74 +1,39 @@
-const API_URL = import.meta.env.VITE_API_BASE_URL;
+import {getUserTransactions, addUserTransaction, updateUserTransaction, deleteUserTransaction, addUser} from './storage'
+
 
 export async function getTransactions(token, queryParams) {
-    
-    const url = queryParams ? `${API_URL}/Transaction?${new URLSearchParams({...queryParams})}`: `${API_URL}/Transaction`;
-
-    const response = await fetch(url, {
-        method: "GET",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-        },
-
-    });
-    
-    if(!response.ok) throw new Error("Could not fetch data from server.");
-
-    const data = await response.json();
-    return data;
+    const response = getUserTransactions(token)
+    if(!response) throw new Error("Could not fetch data from server.");
+    let transactions = response;
+    // filtering
+    if (queryParams.transactionType === "income") {
+        transactions = transactions.filter(t => t.amount > 0);
+    }
+    if (queryParams.transactionType === "expenses") {
+        transactions = transactions.filter(t => t.amount < 0);
+    }
+    if(queryParams.title)
+    {
+        transactions = transactions.filter(t => t.title.includes(queryParams.title));
+    }
+    return transactions;
 }
 
 export async function addTransaction(token,newTransaction) {
-    const url = `${API_URL}/Transaction`;
-    const json = JSON.stringify(newTransaction);
-    const response = await fetch(url, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-        },
-        body: json
-    });
-    const data = await response.json();
-    if(!response.ok) throw new Error(data.error);
-
-    
-    return data;
+    const transaction = {...newTransaction, userId: token}
+    const response = addUserTransaction(transaction)
+    if(!response) throw new Error("Could not add transaction.");
+    return response;
 }
 
 export async function updateTransaction(token,newTransaction) {
-    const url = `${API_URL}/Transaction/${newTransaction.id}`;
-    const json = JSON.stringify(newTransaction);
-    const response = await fetch(url, {
-        method: "PUT",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-        },
-        body: json
-    });
+    const transaction = {...newTransaction, userId: token}
+    const response = updateUserTransaction(transaction)
+    if(!response) throw new Error("Could not update transaction.");
 
-    const data = await response.json();
-    if(!response.ok) throw new Error(data.error);
-
-    return data;
-
+    return response;
 }
 
 export async function deleteTransaction(token, id) {
-    const url = `${API_URL}/Transaction/${id}`;
-    const response = await fetch(url, {
-        method: "DELETE",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-        },
-    });
-
-    if (!response.ok) {
-        const data = await response.json();
-        if (!response.ok) throw new Error(data.error);
-    }
-
+    deleteUserTransaction(token,id);
 }
