@@ -4,6 +4,7 @@ import {deleteTransaction, getTransactions} from '../services/transactionService
 import TransactionEditor from './TransactionEditor'
 import { useAuthentication } from '../context/AuthenticationProvider'
 import { useNotification } from '../context/NotificationProvider'
+import {Button} from 'antd'
 
 export default function Transaction({transaction, setTransactions}) {
     const [isCollapsed, setIsCollapsed] = useState(true);
@@ -42,8 +43,8 @@ export default function Transaction({transaction, setTransactions}) {
                         {
                             !isCollapsed &&
                             <div className='transaction-buttons'>
-                                <button onClick={handleDelete}>Delete</button>
-                                <button onClick={() => setIsInEditing(!isInEditing)}>Edit</button>
+                                <Button onClick={handleDelete}>Delete</Button>
+                                <Button onClick={() => setIsInEditing(!isInEditing)}>Edit</Button>
                             </div>
                         }
                     </div>
@@ -51,12 +52,12 @@ export default function Transaction({transaction, setTransactions}) {
             }
             {
                 isInEditing &&
-                <TransactionEditor 
-                    transaction={transaction} 
-                    setTransactions={setTransactions} 
-                    setIsInEditing={setIsInEditing} 
+                <TransactionEditor
+                    transaction={transaction}
+                    setTransactions={setTransactions}
+                    setIsInEditing={setIsInEditing}
                 />
             }
-        </>   
+        </>
     )
 }

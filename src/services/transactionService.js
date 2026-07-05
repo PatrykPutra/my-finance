@@ -7,10 +7,10 @@ export async function getTransactions(token, queryParams) {
     let transactions = response;
     // filtering
     if (queryParams) {
-        if (queryParams.transactionType === "income") {
+        if (queryParams.transactionType === "Income") {
             transactions = transactions.filter(t => t.amount > 0);
         }
-        if (queryParams.transactionType === "expenses") {
+        if (queryParams.transactionType === "Expenses") {
             transactions = transactions.filter(t => t.amount < 0);
         }
         if (queryParams.title) {

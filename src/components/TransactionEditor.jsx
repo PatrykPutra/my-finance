@@ -6,6 +6,7 @@ import Notification from './Notification';
 import { useAuthentication } from '../context/AuthenticationProvider';
 import { useNotification } from '../context/NotificationProvider';
 import { isValidCharacter, isControlCharacter, isValidFormat} from '../assets/utilities/moneyFormatValidatior.js';
+import {Button} from 'antd'
 
 export default function TransactionEditor({ transaction, setTransactions, setIsInEditing}) {
 
@@ -68,8 +69,8 @@ export default function TransactionEditor({ transaction, setTransactions, setIsI
                 </input>
             </div>
             <div className='transaction-editor-button-panel'>
-                <button type="submit">Submit</button>
-                <button onClick={handleCancel}>Cancel</button>
+                <Button type="submit">Submit</Button>
+                <Button onClick={handleCancel}>Cancel</Button>
             </div>  
         </form>
     )
